@@ -1,0 +1,22 @@
+server:
+  port: 8888
+
+spring:
+  application:
+    name: config-service
+  profiles:
+    active: git   # 로컬 개발 시 native로 변경
+  cloud:
+    config:
+      server:
+        git:
+          uri: https://github.com/dlehdhun/spring-cloud-config.git
+        # 로컬 개발 시 아래 주석 해제하고 위 active를 native로 변경
+        # native:
+        #   search-locations: file:../config-repo
+encrypt:
+  key-store:
+    # 로컬용 위치
+    location: file:///C:/Users/leedo/bootcamp/keystore/apiEncryptionKey.jks
+    password: ${KEYSTORE_PASSWORD}
+    alias: apiEncryptionKey
