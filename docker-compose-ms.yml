@@ -1,0 +1,92 @@
+version: '3.8'
+
+services:
+  # =================================================================
+  # Infra Services (Config, Discovery, Gateway)
+  # =================================================================
+  config-service:
+    container_name: config-service
+    image: config-service:1.0
+    ports:
+      - "8888:8888"
+    environment:
+      - server.port=8888
+    networks:
+      - fin-network
+
+  discovery-service:
+    container_name: discovery-service
+    image: discovery-service:1.0
+    ports:
+      - "8761:8761"
+    environment:
+      - server.port=8761
+      - eureka.client.register-with-eureka=false
+      - eureka.client.fetch-registry=false
+    networks:
+      - fin-network
+
+  gateway-service:
+    container_name: gateway-service
+    image: gateway-service:1.0
+    ports:
+      - "8000:8000"
+    environment:
+      - server.port=8000
+      - eureka.client.service-url.defaultZone=http://discovery-service:8761/eureka
+      # - spring.cloud.config.uri=http://config-service:8888
+    networks:
+      - fin-network
+
+  # =================================================================
+  # Domain Services (Account, Transfer, Notification)
+  # =================================================================
+  account-service:
+    container_name: account-service
+    image: account-service:1.0
+    ports:
+      - "8081:8081"
+    environment:
+      - server.port=8081
+      - eureka.client.service-url.defaultZone=http://discovery-service:8761/eureka
+      - spring.datasource.url=jdbc:mariadb://mariadb-server:3306/account_db
+      - spring.datasource.username=root
+      - spring.datasource.password=root
+    networks:
+      - fin-network
+
+  transfer-service:
+    container_name: transfer-service
+    image: transfer-service:1.0
+    ports:
+      - "8082:8082"
+    environment:
+      - server.port=8082
+      - eureka.client.service-url.defaultZone=http://discovery-service:8761/eureka
+      - spring.datasource.url=jdbc:mariadb://mariadb-server:3306/transfer_db
+      - spring.datasource.username=root
+      - spring.datasource.password=root
+      - spring.kafka.bootstrap-servers=kafka:29092
+    networks:
+      - fin-network
+
+  notification-service:
+    container_name: notification-service
+    image: notification-service:1.0
+    ports:
+      - "8083:8083"
+    environment:
+      - server.port=8083
+      - eureka.client.service-url.defaultZone=http://discovery-service:8761/eureka
+      - spring.datasource.url=jdbc:mariadb://mariadb-server:3306/notification_db
+      - spring.datasource.username=root
+      - spring.datasource.password=root
+      - spring.kafka.bootstrap-servers=kafka:29092
+      # Avro / Schema Registry 주소
+      - spring.kafka.properties.schema.registry.url=http://schema-registry:8081
+    networks:
+      - fin-network
+
+networks:
+  fin-network:
+    external: true

@@ -1,0 +1,126 @@
+version: '3.8'
+
+services:
+  # -----------------------------------------------------------------
+  # MariaDB Server (DB-per-service: account_db, transfer_db, notification_db)
+  # -----------------------------------------------------------------
+  mariadb-server:
+    image: mariadb:11.8
+    container_name: mariadb-server
+    restart: unless-stopped
+    ports:
+      - "3306:3306"
+    environment:
+      MARIADB_ROOT_PASSWORD: root
+      TZ: Asia/Seoul
+    command:
+      - --character-set-server=utf8mb4
+      - --collation-server=utf8mb4_unicode_ci
+      - --bind-address=0.0.0.0
+    volumes:
+      - mariadb-data:/var/lib/mysql
+      - ./initdb:/docker-entrypoint-initdb.d # 초기 DB 생성 스크립트 (account_db 등)
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "healthcheck.sh",
+          "--connect",
+          "--innodb_initialized"
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 20s
+    networks:
+      - fin-network
+
+  # -----------------------------------------------------------------
+  # Apache Kafka (KRaft Mode)
+  # -----------------------------------------------------------------
+  kafka:
+    image: confluentinc/cp-kafka:8.3.0
+    container_name: kafka
+    hostname: kafka
+    ports:
+      - "9092:9092"
+    environment:
+      # KRaft 설정
+      KAFKA_NODE_ID: 1
+      KAFKA_PROCESS_ROLES: broker,controller
+
+      KAFKA_CONTROLLER_QUORUM_VOTERS: "1@kafka:29093"
+      KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
+
+      # 컨테이너 내부(INTERNAL)와 외부 접속(EXTERNAL) 분리
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: >
+        CONTROLLER:PLAINTEXT,
+        INTERNAL:PLAINTEXT,
+        EXTERNAL:PLAINTEXT
+
+      KAFKA_LISTENERS: >
+        INTERNAL://0.0.0.0:29092,
+        CONTROLLER://0.0.0.0:29093,
+        EXTERNAL://0.0.0.0:9092
+
+      KAFKA_ADVERTISED_LISTENERS: >
+        INTERNAL://kafka:29092,
+        EXTERNAL://localhost:9092
+
+      KAFKA_INTER_BROKER_LISTENER_NAME: INTERNAL
+
+      # 단일 브로커 개발 환경
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
+      KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 0
+
+      # 자동 토픽 생성
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: "true"
+
+      # KRaft 클러스터 ID
+      CLUSTER_ID: "MkU3OEVBNTcwNTJENDM2Qk"
+
+    volumes:
+      - kafka-data:/var/lib/kafka/data
+
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "kafka-topics --bootstrap-server localhost:29092 --list >/dev/null 2>&1"
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+    networks:
+      - fin-network
+
+  # -----------------------------------------------------------------
+  # Confluent Schema Registry (Avro 지원)
+  # -----------------------------------------------------------------
+  schema-registry:
+    image: confluentinc/cp-schema-registry:8.3.0
+    container_name: schema-registry
+    hostname: schema-registry
+    depends_on:
+      kafka:
+        condition: service_healthy
+    ports:
+      - "8081:8081"
+    environment:
+      SCHEMA_REGISTRY_HOST_NAME: schema-registry
+      SCHEMA_REGISTRY_KAFKASTORE_BOOTSTRAP_SERVERS: "PLAINTEXT://kafka:29092"
+      SCHEMA_REGISTRY_LISTENERS: "http://0.0.0.0:8081"
+    networks:
+      - fin-network
+
+volumes:
+  kafka-data:
+  mariadb-data:
+    name: mariadb-data
+
+networks:
+  fin-network:
+    driver: bridge
