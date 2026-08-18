@@ -25,7 +25,8 @@ public class JwtAuthenticationGlobalFilter implements GlobalFilter, Ordered {
 
     private static final List<String> WHITELIST = List.of(
             "/api/auth/**",
-            "/actuator/**"
+            "/actuator/health",
+            "/actuator/info"
     );
 
     private static final String AUTHORIZATION_HEADER = "Authorization";
