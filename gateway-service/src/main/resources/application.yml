@@ -19,7 +19,7 @@ spring:
               uri: lb://ACCOUNT-SERVICE
               predicates:
                 - Path=/api/accounts/**
-            - id: transfers-route
+            - id: transfer-route
               uri: lb://TRANSFER-SERVICE
               predicates:
                 - Path=/api/transfers/**

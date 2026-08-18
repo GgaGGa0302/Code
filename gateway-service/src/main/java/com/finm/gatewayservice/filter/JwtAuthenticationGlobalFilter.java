@@ -41,6 +41,9 @@ public class JwtAuthenticationGlobalFilter implements GlobalFilter, Ordered {
 
     @PostConstruct
     public void init() {
+        if (secret == null || secret.isBlank()) {
+            throw new IllegalStateException("Missing required configuration property: token.secret");
+        }
         this.key = Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8));
     }
 
@@ -67,7 +70,7 @@ public class JwtAuthenticationGlobalFilter implements GlobalFilter, Ordered {
                     .getPayload();
 
             ServerHttpRequest mutatedRequest = exchange.getRequest().mutate()
-                    .header("X-User-Id", claims.getSubject())
+                    .headers(headers -> headers.set("X-User-Id", claims.getSubject()))
                     .build();
 
             return chain.filter(exchange.mutate().request(mutatedRequest).build());
