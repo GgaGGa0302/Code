@@ -32,16 +32,13 @@ export const AccountCreateModal = ({ isOpen, onClose }) => {
     <div className="fixed inset-0 bg-slate-900/50 backdrop-blur-xs z-50 flex items-center justify-center p-4">
       <div className="bg-white rounded-2xl max-w-sm w-full p-6 shadow-2xl space-y-4 fade-in">
         <div className="flex items-center justify-between border-b border-slate-100 pb-3">
-          <h3 className="font-bold text-slate-800 text-sm">신규 계좌 개설</h3>
+          <h3 className="font-bold text-slate-800 text-sm">신규 계좌 등록</h3>
           <button onClick={onClose} className="text-slate-400 hover:text-slate-600">
             <i className="fa-solid fa-xmark"></i>
           </button>
         </div>
         <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
-            <label className="block text-xs font-semibold text-slate-600 mb-1">소유자 ID</label>
-            <input type="text" readOnly value={user.userId || 1} className="w-full px-3 py-2 bg-slate-100 border border-slate-200 rounded-xl text-xs text-slate-500" />
-          </div>
+        
           <div>
             <label className="block text-xs font-semibold text-slate-600 mb-1">초기 입금 시드 금액 (원)</label>
             <input type="number" required min="1000" value={balance} onChange={(e) => setBalance(e.target.value)} className="w-full px-3 py-2 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-brand-500/30" />
@@ -51,7 +48,7 @@ export const AccountCreateModal = ({ isOpen, onClose }) => {
               취소
             </button>
             <button type="submit" disabled={isLoading} className="flex-1 py-2.5 bg-brand-600 text-white rounded-xl text-xs font-semibold hover:bg-brand-700 shadow-md disabled:opacity-50">
-              {isLoading ? '처리 중...' : '개설하기'}
+              {isLoading ? '처리 중...' : '등록하기'}
             </button>
           </div>
         </form>

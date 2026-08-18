@@ -47,11 +47,11 @@ export const DashboardPage = () => {
         <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm flex flex-col justify-between">
           <div>
             <span className="text-xs text-slate-500 font-medium">신규 계좌 발급</span>
-            <p className="text-xs text-slate-500 mt-1">원클릭으로 통합 계좌를 개설하세요.</p>
+            <p className="text-xs text-slate-500 mt-1">원클릭으로 통합 계좌를 등록하세요.</p>
           </div>
           <button onClick={() => setIsModalOpen(true)} className="mt-3 w-full bg-brand-50 hover:bg-brand-100 text-brand-600 border border-brand-200 font-semibold py-2.5 rounded-xl text-xs flex items-center justify-center space-x-2 transition">
             <i className="fa-solid fa-plus"></i>
-            <span>신규 계좌 개설</span>
+            <span>신규 계좌 등록</span>
           </button>
         </div>
       </div>

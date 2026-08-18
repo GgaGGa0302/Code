@@ -2,14 +2,6 @@ import React from 'react';
 import { api } from '../shared/api';
 
 export const transferApi = {
-  deposit: async (data) => {
-    const res = await api.post('/transfers/deposit', data);
-    return res.data;
-  },
-  withdraw: async (data) => {
-    const res = await api.post('/transfers/withdraw', data);
-    return res.data;
-  },
   transfer: async (data) => {
     const res = await api.post('/transfers', data);
     return res.data;
