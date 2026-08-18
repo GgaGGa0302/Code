@@ -87,4 +87,20 @@ public class AccountService {
 
         return accountNumber;
     }
+
+    @Transactional
+    public void deposit(String accountNumber, Long amount) {
+        AccountEntity account = accountRepository.findByAccountNumber(accountNumber)
+                .orElseThrow(() -> new IllegalArgumentException("계좌를 찾을 수 없습니다: " + accountNumber));
+
+        account.deposit(amount);
+    }
+
+    @Transactional
+    public void withdraw(String accountNumber, Long amount) {
+        AccountEntity account = accountRepository.findByAccountNumber(accountNumber)
+                .orElseThrow(() -> new IllegalArgumentException("계좌를 찾을 수 없습니다: " + accountNumber));
+
+        account.withdraw(amount);
+    }
 }

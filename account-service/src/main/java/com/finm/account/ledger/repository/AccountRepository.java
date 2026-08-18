@@ -20,4 +20,7 @@ public interface AccountRepository extends JpaRepository<AccountEntity, Long> {
 
     // 계좌 ID와 유저 ID로 특정 계좌 조회
     Optional<AccountEntity> findByAccountIdAndUserId(Long accountId, Long userId);
+
+    // 계좌번호로 계좌 정보 단건 조회 (입/출금 처리용)
+    Optional<AccountEntity> findByAccountNumber(String accountNumber);
 }

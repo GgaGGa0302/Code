@@ -46,4 +46,22 @@ public class AccountController {
         accountService.closeAccount(accountId);
         return ResponseEntity.ok(ApiResponse.success("계좌가 성공적으로 해지되었습니다."));
     }
+
+    @Operation(summary = "계좌 입금/잔액 증가", description = "이체 서비스(내부 통신)에서 호출하는 입금 API")
+    @PostMapping("/{accountNumber}/deposit")
+    public ResponseEntity<ApiResponse<Void>> deposit(
+            @PathVariable String accountNumber,
+            @RequestParam Long amount) {
+        accountService.deposit(accountNumber, amount);
+        return ResponseEntity.ok(ApiResponse.success("입금이 완료되었습니다."));
+    }
+
+    @Operation(summary = "계좌 출금/잔액 차감", description = "이체 서비스(내부 통신)에서 호출하는 출금 API")
+    @PostMapping("/{accountNumber}/withdraw")
+    public ResponseEntity<ApiResponse<Void>> withdraw(
+            @PathVariable String accountNumber,
+            @RequestParam Long amount) {
+        accountService.withdraw(accountNumber, amount);
+        return ResponseEntity.ok(ApiResponse.success("출금이 완료되었습니다."));
+    }
 }
