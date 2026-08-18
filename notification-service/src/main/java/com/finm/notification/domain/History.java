@@ -1,40 +1,41 @@
 package com.finm.notification.domain;
 
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "history")
 @Getter
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
-@AllArgsConstructor
 @Builder
+@NoArgsConstructor
+@AllArgsConstructor
+@EntityListeners(AuditingEntityListener.class)
 public class History {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
     private Long accountNumber;
-
-    @Column(nullable = false)
-    private String transactionType; // DEPOSIT, WITHDRAWAL 등
-
-    @Column(nullable = false)
+    private String transactionType;
     private Long amount;
-
-    @Column(nullable = false)
     private Long balanceAfter;
-
     private String description;
 
-    @Column(nullable = false)
+    @Builder.Default
+    private boolean isRead = false; // 추가
+
+    @CreatedDate
     private LocalDateTime createdAt;
 
-    @PrePersist
-    public void prePersist() {
-        this.createdAt = LocalDateTime.now();
+    // 읽음 처리 비즈니스 메서드 추가
+    public void read() {
+        this.isRead = true;
     }
 }

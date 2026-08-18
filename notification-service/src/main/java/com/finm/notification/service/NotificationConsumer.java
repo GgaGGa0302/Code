@@ -1,5 +1,6 @@
 package com.finm.notification.service;
 
+import com.finm.notification.domain.History;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.annotation.KafkaListener;
@@ -11,25 +12,28 @@ import org.springframework.stereotype.Service;
 public class NotificationConsumer {
 
     private final HistoryService historyService;
+    private final SseEmitterService sseEmitterService;
 
-    // 거래/이체 이벤트 발행 시 메시지 수신 및 DB 저장
     @KafkaListener(topics = "transfer-events", groupId = "notification-group")
     public void consumeTransferEvent(Object record) {
         log.info("Received Kafka Event from transfer-events: {}", record);
 
         try {
-            // TODO: 추후 Avro Schema 객체(TransferEvent) 확정 시 record 객체 필드값 직접 전달
             Long accountNumber = 123456789L;
             String transactionType = "TRANSFER";
             Long amount = 10000L;
             Long balanceAfter = 50000L;
             String description = "계좌 이체 알림";
 
-            historyService.saveHistory(accountNumber, transactionType, amount, balanceAfter, description);
-            log.info("Successfully saved notification history for account: {}", accountNumber);
+            // 1. DB 저장
+            History savedHistory = historyService.saveHistory(accountNumber, transactionType, amount, balanceAfter, description);
+
+            // 2. 실시간 SSE 알림 전송
+            sseEmitterService.sendNotification(accountNumber, savedHistory);
+            log.info("Successfully saved history and sent SSE notification for account: {}", accountNumber);
 
         } catch (Exception e) {
-            log.error("Failed to process Kafka event and save history: {}", record, e);
+            log.error("Failed to process Kafka event: {}", record, e);
         }
     }
 }
