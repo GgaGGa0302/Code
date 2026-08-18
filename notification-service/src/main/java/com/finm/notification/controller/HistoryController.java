@@ -21,4 +21,11 @@ public class HistoryController {
         List<NotificationResponseDto> response = historyService.getHistoryByAccount(accountNumber);
         return ResponseEntity.ok(response);
     }
+
+    // 읽음 상태 처리 API
+    @PatchMapping("/history/{historyId}/read")
+    public ResponseEntity<Void> markAsRead(@PathVariable Long historyId) {
+        historyService.markAsRead(historyId);
+        return ResponseEntity.ok().build();
+    }
 }

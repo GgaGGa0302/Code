@@ -41,4 +41,12 @@ public class HistoryService {
                 .map(NotificationResponseDto::from)
                 .collect(Collectors.toList());
     }
+
+    // 특정 알림 ID 읽음 상태 변경
+    @Transactional
+    public void markAsRead(Long historyId) {
+        History history = historyRepository.findById(historyId)
+                .orElseThrow(() -> new IllegalArgumentException("해당 알림이 존재하지 않습니다. id=" + historyId));
+        history.markAsRead();
+    }
 }
