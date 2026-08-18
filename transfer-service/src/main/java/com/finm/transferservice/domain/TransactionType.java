@@ -1,4 +1,4 @@
-package com.finm.transfer.domain;
+package com.finm.transferservice.domain;
 
 public enum TransactionType {
     DEPOSIT,   // 입금

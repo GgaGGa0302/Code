@@ -1,9 +1,9 @@
-package com.finm.transfer.service;
+package com.finm.transferservice.service;
 
-import com.finm.transfer.dto.DepositRequest;
-import com.finm.transfer.dto.TransferRequest;
-import com.finm.transfer.dto.TransferResponse;
-import com.finm.transfer.dto.WithdrawRequest;
+import com.finm.transferservice.dto.DepositRequest;
+import com.finm.transferservice.dto.TransferRequest;
+import com.finm.transferservice.dto.TransferResponse;
+import com.finm.transferservice.dto.WithdrawRequest;
 
 import java.util.List;
 

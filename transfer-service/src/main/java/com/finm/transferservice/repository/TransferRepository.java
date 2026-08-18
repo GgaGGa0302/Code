@@ -1,6 +1,6 @@
-package com.finm.transfer.repository;
+package com.finm.transferservice.repository;
 
-import com.finm.transfer.domain.Transfer;
+import com.finm.transferservice.domain.Transfer;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

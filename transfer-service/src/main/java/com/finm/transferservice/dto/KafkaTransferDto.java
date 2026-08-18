@@ -1,4 +1,4 @@
-package com.finm.transfer.dto;
+package com.finm.transferservice.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

@@ -1,14 +1,14 @@
-package com.finm.transfer.service.impl;
+package com.finm.transferservice.service;
 
-import com.finm.transfer.domain.TransactionType;
-import com.finm.transfer.domain.Transfer;
-import com.finm.transfer.dto.DepositRequest;
-import com.finm.transfer.dto.TransferRequest;
-import com.finm.transfer.dto.TransferResponse;
-import com.finm.transfer.dto.WithdrawRequest;
-import com.finm.transfer.kafka.TransferProducerService;
-import com.finm.transfer.repository.TransferRepository;
-import com.finm.transfer.service.TransferService;
+import com.finm.transferservice.domain.TransactionType;
+import com.finm.transferservice.domain.Transfer;
+import com.finm.transferservice.dto.DepositRequest;
+import com.finm.transferservice.dto.TransferRequest;
+import com.finm.transferservice.dto.TransferResponse;
+import com.finm.transferservice.dto.WithdrawRequest;
+import com.finm.transferservice.kafka.TransferProducerService;
+import com.finm.transferservice.repository.TransferRepository;
+import com.finm.transferservice.service.TransferService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;

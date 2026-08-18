@@ -1,17 +1,20 @@
-package com.finm.transfer.dto;
+package com.finm.transferservice.dto;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.finm.transfer.domain.TransactionType;
-import com.finm.transfer.domain.Transfer;
-import com.finm.transfer.domain.TransferStatus;
+import com.finm.transferservice.domain.TransactionType;
+import com.finm.transferservice.domain.Transfer;
+import com.finm.transferservice.domain.TransferStatus;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
 @Getter
 @Builder
-@JsonInclude(JsonInclude.Include.ALWAYS)
+@NoArgsConstructor
+@AllArgsConstructor
 public class TransferResponse {
     private String transferId;
     private TransactionType transactionType;

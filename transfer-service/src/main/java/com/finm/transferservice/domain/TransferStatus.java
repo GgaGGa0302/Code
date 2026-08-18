@@ -1,4 +1,4 @@
-package com.finm.transfer.domain;
+package com.finm.transferservice.domain;
 
 public enum TransferStatus {
     REQUESTED,    // 거래 요청 접수 (기본값)

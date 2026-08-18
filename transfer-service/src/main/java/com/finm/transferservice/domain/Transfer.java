@@ -1,4 +1,4 @@
-package com.finm.transfer.domain;
+package com.finm.transferservice.domain;
 
 import jakarta.persistence.*;
 import lombok.AccessLevel;

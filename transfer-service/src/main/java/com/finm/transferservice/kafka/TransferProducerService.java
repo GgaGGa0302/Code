@@ -1,10 +1,10 @@
-package com.finm.transfer.kafka;
+package com.finm.transferservice.kafka;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import com.finm.transfer.domain.Transfer;
-import com.finm.transfer.dto.TransferResponse;
+import com.finm.transferservice.domain.Transfer;
+import com.finm.transferservice.dto.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.core.KafkaTemplate;

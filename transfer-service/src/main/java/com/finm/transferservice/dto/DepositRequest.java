@@ -9,8 +9,8 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class TransferRequest {
-    private String fromAccount;
+public class DepositRequest {
+
     private String toAccount;
     private Long amount;
 }

@@ -1,10 +1,10 @@
-package com.finm.transfer.controller;
+package com.finm.transferservice.controller;
 
-import com.finm.transfer.dto.DepositRequest;
-import com.finm.transfer.dto.TransferRequest;
-import com.finm.transfer.dto.TransferResponse;
-import com.finm.transfer.dto.WithdrawRequest;
-import com.finm.transfer.service.TransferService;
+import com.finm.transferservice.dto.DepositRequest;
+import com.finm.transferservice.dto.TransferRequest;
+import com.finm.transferservice.dto.TransferResponse;
+import com.finm.transferservice.dto.WithdrawRequest;
+import com.finm.transferservice.service.TransferService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
