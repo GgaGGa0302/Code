@@ -44,10 +44,19 @@ public class TransferServiceImpl implements TransferService {
                 .build();
 
         // account-service 호출하여 입금 계좌 잔액 증가
-        accountServiceClient.depositBalance(request.getToAccount(), request.getAmount());
+        try {
+            accountServiceClient.depositBalance(request.getToAccount(), request.getAmount());
+            // 거래 완료 처리
+            transfer.markCompleted();
+        } catch (Exception e) {
+            log.error("[TransferService] Deposit failed for account: {}", request.getToAccount(), e);
+            // 거래 실패 처리
+            transfer.markFailed(e.getMessage());
+            transferRepository.save(transfer);
+            throw new RuntimeException("입금 처리에 실패했습니다: " + e.getMessage(), e);
+        }
 
-        // 거래 완료 처리 및 DB 저장
-        transfer.markCompleted();
+        // DB 저장
         Transfer savedTransfer = transferRepository.save(transfer);
         TransferResponse response = TransferResponse.from(savedTransfer);
 
@@ -71,10 +80,19 @@ public class TransferServiceImpl implements TransferService {
                 .build();
 
         // account-service 호출하여 출금 계좌 잔액 차감
-        accountServiceClient.withdrawBalance(request.getFromAccount(), request.getAmount());
+        try {
+            accountServiceClient.withdrawBalance(request.getFromAccount(), request.getAmount());
+            // 거래 완료 처리
+            transfer.markCompleted();
+        } catch (Exception e) {
+            log.error("[TransferService] Withdraw failed for account: {}", request.getFromAccount(), e);
+            // 거래 실패 처리
+            transfer.markFailed(e.getMessage());
+            transferRepository.save(transfer);
+            throw new RuntimeException("출금 처리에 실패했습니다: " + e.getMessage(), e);
+        }
 
-        // 거래 완료 처리 및 DB 저장
-        transfer.markCompleted();
+        // DB 저장
         Transfer savedTransfer = transferRepository.save(transfer);
         TransferResponse response = TransferResponse.from(savedTransfer);
 
@@ -97,12 +115,41 @@ public class TransferServiceImpl implements TransferService {
                 .amount(request.getAmount())
                 .build();
 
-        // 출금 계좌 잔액 차감 후 입금 계좌 잔액 증가
-        accountServiceClient.withdrawBalance(request.getFromAccount(), request.getAmount());
-        accountServiceClient.depositBalance(request.getToAccount(), request.getAmount());
+        // 출금 계좌 잔액 차감 시도
+        try {
+            accountServiceClient.withdrawBalance(request.getFromAccount(), request.getAmount());
+        } catch (Exception e) {
+            log.error("[TransferService] Withdrawal step failed: fromAccount={}", request.getFromAccount(), e);
+            // 출금 실패 처리 및 저장 후 예외 전파
+            transfer.markFailed("출금 실패: " + e.getMessage());
+            transferRepository.save(transfer);
+            throw new RuntimeException("출금 중 오류가 발생했습니다: " + e.getMessage(), e);
+        }
+
+        // 입금 계좌 잔액 증가 시도 (실패 시 보상 트랜잭션 실행)
+        try {
+            accountServiceClient.depositBalance(request.getToAccount(), request.getAmount());
+            // 거래 완료 처리
+            transfer.markCompleted();
+        } catch (Exception e) {
+            log.error("[TransferService] Deposit step failed, rolling back: toAccount={}", request.getToAccount(), e);
+
+            // 보상 트랜잭션: 출금 계좌로 원금 재입금 (Saga Rollback)
+            try {
+                accountServiceClient.depositBalance(request.getFromAccount(), request.getAmount());
+                transfer.markCompensated();
+                transfer.markFailed("입금 실패로 인한 원복 완료: " + e.getMessage());
+            } catch (Exception compensationEx) {
+                log.error("[TransferService] CRITICAL: Compensation failed! Manual adjustment needed: fromAccount={}",
+                        request.getFromAccount(), compensationEx);
+                transfer.markFailed("입금 실패 및 보상 트랜잭션 실패 (수동 정산 필요): " + compensationEx.getMessage());
+            }
+
+            transferRepository.save(transfer);
+            throw new RuntimeException("이체 처리 중 오류가 발생하여 출금 금액이 원복되었습니다: " + e.getMessage(), e);
+        }
 
         // 거래 완료 처리 및 DB 저장
-        transfer.markCompleted();
         Transfer savedTransfer = transferRepository.save(transfer);
         TransferResponse response = TransferResponse.from(savedTransfer);
 

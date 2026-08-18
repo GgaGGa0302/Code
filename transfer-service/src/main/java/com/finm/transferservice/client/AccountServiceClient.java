@@ -1,11 +1,12 @@
 package com.finm.transferservice.client;
 
+import com.finm.transferservice.config.FeignConfig;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-@FeignClient(name = "account-service")
+@FeignClient(name = "account-service", configuration = FeignConfig.class)
 public interface AccountServiceClient {
 
     // 입금 처리 (잔액 증가)
