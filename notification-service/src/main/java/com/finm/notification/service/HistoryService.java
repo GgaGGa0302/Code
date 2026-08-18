@@ -1,6 +1,7 @@
 package com.finm.notification.service;
 
 import com.finm.notification.domain.History;
+import com.finm.notification.dto.NotificationResponseDto;
 import com.finm.notification.repository.HistoryRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -8,6 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -31,9 +33,12 @@ public class HistoryService {
         return historyRepository.save(history);
     }
 
-    // 계좌별 거래 내역 조회
+    // 계좌별 거래 내역 DTO 목록 조회
     @Transactional(readOnly = true)
-    public List<History> getHistoryByAccount(Long accountNumber) {
-        return historyRepository.findByAccountNumberOrderByCreatedAtDesc(accountNumber);
+    public List<NotificationResponseDto> getHistoryByAccount(Long accountNumber) {
+        return historyRepository.findByAccountNumberOrderByCreatedAtDesc(accountNumber)
+                .stream()
+                .map(NotificationResponseDto::from)
+                .collect(Collectors.toList());
     }
 }
