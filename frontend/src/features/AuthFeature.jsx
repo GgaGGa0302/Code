@@ -18,9 +18,9 @@ const signupApi = async ({ name, email, password }) => {
 
 export const AuthFeature = () => {
   const [tab, setTab] = useState('login');
-  const [email, setEmail] = useState('hong@test.com');
-  const [password, setPassword] = useState('password123');
+  const [email, setEmail] = useState('');
   const [name, setName] = useState('');
+  const [password, setPassword] = useState('');
   const { login } = useAuth();
   
   // 로그인 뮤테이션 훅 사용
@@ -80,11 +80,11 @@ export const AuthFeature = () => {
         >
           <div>
             <label className="block text-xs font-semibold text-slate-600 mb-1">이메일 계정</label>
-            <input type="email" required value={email} onChange={(e) => setEmail(e.target.value)} className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-brand-500/30 text-sm" />
+            <input type="email" required placeholder="example@domain.com" value={email} onChange={(e) => setEmail(e.target.value)} className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-brand-500/30 text-sm" />
           </div>
           <div>
             <label className="block text-xs font-semibold text-slate-600 mb-1">비밀번호</label>
-            <input type="password" required value={password} onChange={(e) => setPassword(e.target.value)} className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-brand-500/30 text-sm" />
+            <input type="password" required placeholder="비밀번호 입력" value={password} onChange={(e) => setPassword(e.target.value)} className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-brand-500/30 text-sm" />
           </div>
           <button type="submit" disabled={isLoginLoading} className="w-full bg-brand-600 hover:bg-brand-700 text-white font-semibold py-3 rounded-xl shadow-md text-sm transition disabled:opacity-50">
             {isLoginLoading ? '로그인 중...' : '로그인'}
