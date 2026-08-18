@@ -1,5 +1,6 @@
 package com.finm.transferservice.service;
 
+import com.finm.transferservice.client.AccountServiceClient;
 import com.finm.transferservice.domain.TransactionType;
 import com.finm.transferservice.domain.Transfer;
 import com.finm.transferservice.dto.DepositRequest;
@@ -11,6 +12,7 @@ import com.finm.transferservice.repository.TransferRepository;
 import com.finm.transferservice.service.TransferService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -27,6 +29,7 @@ public class TransferServiceImpl implements TransferService {
 
     private final TransferRepository transferRepository;
     private final TransferProducerService transferProducerService;
+    private final AccountServiceClient accountServiceClient;
 
     // 현금 입금 처리
     @Override
@@ -40,7 +43,8 @@ public class TransferServiceImpl implements TransferService {
                 .amount(request.getAmount())
                 .build();
 
-        // account-service FeignClient 호출로 입금 잔액 증가 처리
+        // account-service 호출하여 입금 계좌 잔액 증가
+        accountServiceClient.depositBalance(request.getToAccount(), request.getAmount());
 
         // 거래 완료 처리 및 DB 저장
         transfer.markCompleted();
@@ -66,7 +70,8 @@ public class TransferServiceImpl implements TransferService {
                 .amount(request.getAmount())
                 .build();
 
-        // account-service FeignClient 호출로 잔액 검증 및 차감 처리
+        // account-service 호출하여 출금 계좌 잔액 차감
+        accountServiceClient.withdrawBalance(request.getFromAccount(), request.getAmount());
 
         // 거래 완료 처리 및 DB 저장
         transfer.markCompleted();
@@ -92,7 +97,9 @@ public class TransferServiceImpl implements TransferService {
                 .amount(request.getAmount())
                 .build();
 
-        // account-service FeignClient 호출 (출금 계좌 차감 -> 입금 계좌 증가)
+        // 출금 계좌 잔액 차감 후 입금 계좌 잔액 증가
+        accountServiceClient.withdrawBalance(request.getFromAccount(), request.getAmount());
+        accountServiceClient.depositBalance(request.getToAccount(), request.getAmount());
 
         // 거래 완료 처리 및 DB 저장
         transfer.markCompleted();
