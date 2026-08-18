@@ -1,0 +1,49 @@
+package com.finm.account.ledger.controller;
+
+import com.finm.account.config.ApiResponse;
+import com.finm.account.ledger.dto.AccountCreateRequestDto;
+import com.finm.account.ledger.dto.AccountResponseDto;
+import com.finm.account.ledger.service.AccountService;
+
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+@Tag(name = "Account", description = "계좌 API (JWT 인증 필요)")
+@RestController
+@RequestMapping("/api/accounts")
+@RequiredArgsConstructor
+public class AccountController {
+
+    private final AccountService accountService;
+
+    @Operation(summary = "신규 계좌 개설", description = "새로운 계좌를 생성합니다.")
+    @PostMapping
+    public ResponseEntity<ApiResponse<AccountResponseDto>> createAccount(@Valid @RequestBody AccountCreateRequestDto request) {
+        AccountResponseDto response = accountService.createAccount(request);
+        return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse.success(response));
+    }
+
+    @Operation(summary = "보유 계좌 목록 조회", description = "특정 사용자의 활성 계좌 목록을 조회합니다.")
+    @GetMapping("/{userId}")
+    public ResponseEntity<ApiResponse<List<AccountResponseDto>>> getAccountsByUserId(
+            @Parameter(description = "사용자 ID", required = true) @PathVariable Long userId) {
+        List<AccountResponseDto> response = accountService.getAccountsByUserId(userId);
+        return ResponseEntity.ok(ApiResponse.success(response));
+    }
+
+    @Operation(summary = "계좌 해지", description = "계좌 상태를 'CLOSED'로 변경합니다 (Soft Delete).")
+    @DeleteMapping("/{accountId}")
+    public ResponseEntity<ApiResponse<Void>> closeAccount(
+            @Parameter(description = "계좌 ID", required = true) @PathVariable Long accountId) {
+        accountService.closeAccount(accountId);
+        return ResponseEntity.ok(ApiResponse.success("계좌가 성공적으로 해지되었습니다."));
+    }
+}
