@@ -9,10 +9,12 @@ services:
     container_name: mariadb-server
     restart: unless-stopped
     ports:
-      - "3306:3306"
+      - "13306:3306"
+
     environment:
       MARIADB_ROOT_PASSWORD: root
       TZ: Asia/Seoul
+      
     command:
       - --character-set-server=utf8mb4
       - --collation-server=utf8mb4_unicode_ci
