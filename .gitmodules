@@ -16,3 +16,9 @@
 [submodule "gp-assignment"]
 	path = gp-assignment
 	url = https://github.com/GgaGGa0302/gp-assignment.git
+[submodule "zoop"]
+	path = zoop
+	url = https://github.com/Donbug/zoop.git
+[submodule "zoop-infra"]
+	path = zoop-infra
+	url = https://github.com/Donbug/zoop-infra.git
