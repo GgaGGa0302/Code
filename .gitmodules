@@ -1,0 +1,18 @@
+[submodule "LG-CNS-AM-INSPIRE_5_BE"]
+	path = LG-CNS-AM-INSPIRE_5_BE
+	url = https://github.com/GgaGGa0302/LG-CNS-AM-INSPIRE_5_BE.git
+[submodule "LG-CNS-AM-INSPIRE_5_FE"]
+	path = LG-CNS-AM-INSPIRE_5_FE
+	url = https://github.com/GgaGGa0302/LG-CNS-AM-INSPIRE_5_FE.git
+[submodule "Project-Nova"]
+	path = Project-Nova
+	url = https://github.com/GgaGGa0302/Project-Nova.git
+[submodule "boorov"]
+	path = boorov
+	url = https://github.com/GgaGGa0302/boorov.git
+[submodule "fin-account-hub"]
+	path = fin-account-hub
+	url = https://github.com/GgaGGa0302/fin-account-hub.git
+[submodule "gp-assignment"]
+	path = gp-assignment
+	url = https://github.com/GgaGGa0302/gp-assignment.git
